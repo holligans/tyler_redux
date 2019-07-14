@@ -5,22 +5,11 @@
 const ADD_TODO = 'ADD_TODO';
 const REMOVE_TODO = 'REMOVE_TODO';
 const TOGGLE_TODO = 'TOGGLE_TODO';
+const ADD_GOAL = 'ADD_GOAL';
+const REMOVE_GOAL = 'REMOVE_GOAL';
 
-// Action creator 
-function addTodoAction(todo) {
-    return {
-        type: ADD_TODO,
-        todo,
-    }
-}
 
-mystore.dispatch(addTodoAction({
-    name: "open account",
-    id: 0,
-    complete: false
-}))
-
-// REDUCER function todos
+// TODOS REDUCERS
 function todos(state = [], action) {
     switch (action.type) {
         case ADD_TODO:
@@ -36,8 +25,7 @@ function todos(state = [], action) {
             // } : elem);
             // New way to toggle the object
             return state.map(todo => todo.id !== action.id ? todo : Object.assign({}, todo, {
-                complete: true,
-                name: 'Learn React'
+                complete: !todo.complete,
             }));
         default:
             return state;
@@ -45,11 +33,35 @@ function todos(state = [], action) {
     }
 }
 
+// TODO's ACTION CREATORS
+function addTodoAction(todo) {
+    return {
+        type: ADD_TODO,
+        todo,
+    }
+}
+
+function removeTodoAction(todo) {
+    return {
+        type: REMOVE_TODO,
+        todo,
+    }
+}
+
+function toggleTodoAction(id) {
+    return {
+        type: TOGGLE_TODO,
+        id,
+    }
+}
+
+
+// GOALS REDUCER
 function goals(state = [], action) {
     switch (action.type) {
-        case 'ADD_GOAL':
+        case ADD_GOAL:
             return state.concat([action.goal]); // .concat() return a new state object but not mutate the current state tree
-        case 'REMOVE_GOAL':
+        case REMOVE_GOAL:
             return state.filter((goal) => goal.id !== action.id);
         default:
             return state;
@@ -57,6 +69,20 @@ function goals(state = [], action) {
     }
 }
 
+// GOALS ACTION CREATOR
+function addGoalAction(goal) {
+    return {
+        type: ADD_GOAL,
+        goal,
+    }
+}
+
+function removeGoalAction(goal) {
+    return {
+        type: REMOVE_GOAL,
+        goal,
+    }
+}
 
 // COMBINE REDUCERS
 function combinerReducers(state = {}, action) {
@@ -66,12 +92,6 @@ function combinerReducers(state = {}, action) {
     }
 
 }
-
-// ACTIONS
-// {
-//     type: "REMOVE_TODO",
-//     id: 0
-// }
 
 // STORE
 function createStore(combinerReducers) {
@@ -110,20 +130,6 @@ function createStore(combinerReducers) {
     }
 }
 
+const myStore = createStore(combinerReducers);
 
-
-// const firstStore = createStore(combinerReducers); /// {methods}
-// console.log(firstStore.getState());
-
-// const unsubscribe = firstStore.subscribe(() => console.log(`the state has been changed to: ${firstStore.getState()}`));
-
-// firstStore.dispatch({
-//     type: 'ADD_TODO',
-//     todo: {
-//         id: 0,
-//         name: 'Learn redux',
-//         complete: false
-//     }
-// });
-
-// unsubscribe();
+// const let_me_know = myStore.subscribe(() => console.log(myStore.getState()));

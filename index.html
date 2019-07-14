@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>TODOS/GOALS</title>
+</head>
+
+<body>
+    <div class="todos_section">
+        <h1>Todos list</h1>
+        <input id="todo_input" type="text" placeholder="Add todo">
+        <button id="todoBtn">Add todo</button>
+        <ul id="todos_list"></ul>
+    </div>
+    <div class="goals_section">
+        <h1>Goals list</h1>
+        <input id="goal_input" type="text" placeholder="Add goal">
+        <button id="goalBtn">Add goal</button>
+        <ul id="goals_list"></ul>
+    </div>
+    <script src="examples/index.js"></script>
+    <script>
+        // RANDOM ID GENERATOR  https://stackoverflow.com/questions/6860853/generate-random-string-for-div-id
+        function guidGenerator() {
+            var S4 = function () {
+                return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+            };
+            return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+        }
+        // addTodo Handler function
+        function addTodoHandler() {
+            const input = document.getElementById('todo_input');
+            const title = input.value;
+            input.value = '';
+            // dispatch an action using action creator
+            myStore.dispatch(addTodoAction({
+                id: guidGenerator(),
+                title,
+                complete: false
+            }))
+        };
+        document.getElementById('todoBtn').addEventListener('click', addTodoHandler);
+
+        // suscribe 
+        myStore.subscribe(() => {
+            const {
+                todos,
+                goals
+            } = myStore.getState();
+
+            document.getElementById("todos_list").innerHTML = '';
+            todos.forEach(todo => {
+                addTodoToDOM(todo);
+            });
+
+            document.getElementById("goals_list").innerHTML = '';
+            goals.forEach(goal => {
+                addGoalToDOM(goal);
+            });
+
+        })
+
+
+        //   add todo to the DOM
+        function addTodoToDOM(todo) {
+            const node = document.createElement('li');
+            const content = document.createTextNode(todo.title);
+            node.appendChild(content);
+            node.style.textDecoration = todo.complete ? 'line-through' : 'none';
+            // toggle todo handler
+            node.addEventListener('click', () => {
+                myStore.dispatch(toggleTodoAction(todo.id))
+            });
+            document.getElementById('todos_list').appendChild(node);
+        }
+
+        //   add todo to the DOM
+        function addGoalToDOM(goal) {
+            const node = document.createElement('li');
+            const content = document.createTextNode(goal.title);
+            node.appendChild(content);
+            document.getElementById('goals_list').appendChild(node);
+        }
+
+        // addGoal Handler function
+        function addGoalHandler() {
+            const input = document.getElementById('goal_input');
+            const title = input.value;
+            input.value = '';
+            // dispatch an action using an action creator
+            myStore.dispatch(addGoalAction({
+                id: guidGenerator(),
+                title,
+                complete: false
+            }))
+        }
+        document.getElementById('goalBtn').addEventListener('click', addGoalHandler);
+    </script>
+</body>
+
+</html>
