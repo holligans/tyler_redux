@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.4/redux.min.js"></script>
     <title>TODOS/GOALS</title>
 </head>
 
@@ -21,6 +22,7 @@
         <button id="goalBtn">Add goal</button>
         <ul id="goals_list"></ul>
     </div>
+
     <script src="examples/index.js"></script>
     <script>
         // RANDOM ID GENERATOR  https://stackoverflow.com/questions/6860853/generate-random-string-for-div-id
@@ -30,17 +32,28 @@
             };
             return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
         }
+        // Function to create a delete BTN
+        function createRemoveBTN(listener) {
+            const btn = document.createElement('button');
+            btn.innerHTML = 'X';
+            btn.addEventListener('click', listener);
+            return btn;
+        }
+
         // addTodo Handler function
         function addTodoHandler() {
             const input = document.getElementById('todo_input');
             const title = input.value;
             input.value = '';
             // dispatch an action using action creator
-            myStore.dispatch(addTodoAction({
-                id: guidGenerator(),
-                title,
-                complete: false
-            }))
+            if (title !== '') {
+                myStore.dispatch(addTodoAction({
+                    id: guidGenerator(),
+                    title,
+                    complete: false
+                }))
+            }
+            return false;
         };
         document.getElementById('todoBtn').addEventListener('click', addTodoHandler);
 
@@ -69,6 +82,9 @@
             const node = document.createElement('li');
             const content = document.createTextNode(todo.title);
             node.appendChild(content);
+            node.appendChild(createRemoveBTN(() => {
+                myStore.dispatch(removeTodoAction(todo.id));
+            }))
             node.style.textDecoration = todo.complete ? 'line-through' : 'none';
             // toggle todo handler
             node.addEventListener('click', () => {
@@ -82,6 +98,9 @@
             const node = document.createElement('li');
             const content = document.createTextNode(goal.title);
             node.appendChild(content);
+            node.appendChild(createRemoveBTN(() => {
+                myStore.dispatch(removeGoalAction(goal.id));
+            }))
             document.getElementById('goals_list').appendChild(node);
         }
 
@@ -91,11 +110,14 @@
             const title = input.value;
             input.value = '';
             // dispatch an action using an action creator
-            myStore.dispatch(addGoalAction({
-                id: guidGenerator(),
-                title,
-                complete: false
-            }))
+            if (title !== "") {
+                myStore.dispatch(addGoalAction({
+                    id: guidGenerator(),
+                    title,
+                    complete: false
+                }))
+            }
+            return false;
         }
         document.getElementById('goalBtn').addEventListener('click', addGoalHandler);
     </script>

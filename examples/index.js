@@ -41,10 +41,10 @@ function addTodoAction(todo) {
     }
 }
 
-function removeTodoAction(todo) {
+function removeTodoAction(id) {
     return {
         type: REMOVE_TODO,
-        todo,
+        id,
     }
 }
 
@@ -77,21 +77,21 @@ function addGoalAction(goal) {
     }
 }
 
-function removeGoalAction(goal) {
+function removeGoalAction(id) {
     return {
         type: REMOVE_GOAL,
-        goal,
+        id,
     }
 }
 
 // COMBINE REDUCERS
-function combinerReducers(state = {}, action) {
-    return {
-        todos: todos(state.todos, action),
-        goals: goals(state.goals, action)
-    }
+// function combinerReducers(state = {}, action) {
+//     return {
+//         todos: todos(state.todos, action),
+//         goals: goals(state.goals, action)
+//     }
 
-}
+// }
 
 // STORE
 function createStore(combinerReducers) {
@@ -130,6 +130,9 @@ function createStore(combinerReducers) {
     }
 }
 
-const myStore = createStore(combinerReducers);
+const myStore = Redux.createStore(Redux.combineReducers({
+    todos,
+    goals
+}));
 
 // const let_me_know = myStore.subscribe(() => console.log(myStore.getState()));
